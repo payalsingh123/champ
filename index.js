@@ -64,13 +64,13 @@ app.get("/current",currAns,(req,res)=>{
 
 
 
-app.listen(process.env.port, async () => {
-    console.log(`server is running on ${process.env.port}`);
+app.listen(5050, async () => {
+    console.log(`server is running on 5050`);
     try {
         await seqlize.authenticate()
         console.log(`connected to DB`);
     } catch (error) {
-        console.log("error connecting DB");
+        console.log("error connecting to DB");
         console.log(error);
     }
 })
