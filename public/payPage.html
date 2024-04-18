@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100&family=Ubuntu&display=swap" rel="stylesheet">
+
+    <style>
+        *{
+            font-family: 'Ubuntu', sans-serif;
+        }
+        #first{
+            border: 2px solid rgb(14, 13, 13);
+            width: 60%;
+            margin: auto;
+            padding: 10px;
+        }
+        #first>input{
+            padding: 10px;
+            font-size: 25px;
+
+        }
+        #first>button{
+            margin-top: 30px;
+            margin-left: 80px;
+            cursor: pointer;
+            width: 80%;
+            background-color: green;
+            padding: 10px;
+            font-size: 25px;
+            font-weight: bolder;
+        }
+        #first>button:hover{
+            color: white;
+
+        }
+
+        #notify{
+            box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+            border: 1px solid black;
+            display: none;
+            /* display: inline-block; */
+            background-color: rgb(2, 120, 8);
+            width: 250px;
+            position: absolute;
+            height: 30px;
+            /* display: grid; */
+            place-items: center;
+            top: 50%;
+            left: 50%;
+            font-size: 20px;
+            font-weight: bolder;
+            padding: 5px 10px 5px 10px;
+            border-radius: 1.5rem;
+            color: white;
+            /* right: 0; */
+        }
+
+    </style>
+</head>
+<body>
+  
+        <div id="first">
+            <h2>Contact</h2>
+            <input type="text" placeholder="enter email address">
+            <h2>Delivery</h2>
+            <input type="text" id="country" placeholder="Country/region"><br>
+            <input type="text" id="firstN" placeholder="First Name">
+            <input type="text" id="lastN" placeholder="Last Name">
+            <input type="text" id="add" placeholder="Address">
+            <input type="text" placeholder="City">
+            <input type="text" placeholder="State"> 
+            <input type="text" placeholder="Pincode">
+            <h2>Payment</h2>
+            <div>Cash on Delivery</div>
+            <button>Buy Now</button>
+        </div>
+       
+ <div id="notify">Thank You For Your Order</div>
+  
+    
+</body>
+</html>
+<script>
+    document.querySelector("button").addEventListener("click",()=>{
+        document.querySelector("#notify").style.display='block'
+        setTimeout(() => {
+            document.querySelector("#notify").style.display='none'      
+        }, 2000);
+    })
+</script>

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        font-family: 'Belanosima', sans-serif;
+    }
+
+    #ifra {
+        width: 1349px;
+        margin-left: 15%;
+        /* margin-left: 250px; */
+        box-sizing: border-box;
+        margin-top: 30px;
+        height: 675px;
+        border: 1px solid black;
+        /* margin: 0 auto; */
+        transform: scale(0.75);
+        transform-origin: 0 0;
+        cursor: none;
+        pointer-events: none;
+    }
+
+    body {
+        overflow: hidden;
+    }
+
+    #progress {
+        width: 900px;
+        /* border: 1px solid red; */
+    }
+
+    #bel {
+        display: flex;
+        justify-content: space-between;
+        /* border: 2px solid black; */
+        width: 67.5%;
+
+        margin: auto;
+        margin-top: -150px;
+        margin-left: 15%;
+
+    }
+
+    #play,
+    #paused {
+        font-size: 25px;
+        background-color: black;
+        color: white;
+        padding: 10px;
+        cursor: pointer;
+    }
+
+    #play {
+        display: none;
+    }
+
+    #timer {
+        /* border: 2px solid black; */
+        display: grid;
+        place-items: center;
+        /* color: black; */
+    }
+
+    #timer>p {
+        color: black;
+        font-weight: bolder;
+    }
+
+    #insideP {
+        width: 100%;
+        height: 5px;
+        border: 2px solid black;
+        margin-top: 20px;
+    }
+
+    #insidepp {
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(to right, black 0%, transparent 0%);
+    }
+</style>
+
+<body>
+    <iframe id="ifra" src="" frameborder="0"></iframe>
+    <div id="bel">
+        <div id="pause">
+            <i class="fa-solid fa-play" id="play"></i>
+            <i class="fa-solid fa-pause" id="paused"></i>
+        </div>
+        <div id="progress">
+            <div id="insideP">
+                <div id="insidepp"></div>
+            </div>
+        </div>
+        <div id="timer">
+            <p> </p>
+        </div>
+    </div>
+
+</body>
+
+</html>
+
+<script>
+
+
+    let durationInSeconds;
+
+    // let pehlApyar;
+    let iframe = document.querySelector("#ifra")
+    iframe.src = './copy/index.html'
+    let cursor = document.createElement('div');
+    let clickmage = document.createElement('img');
+    clickmage.src = 'http://localhost:5050/images/Ripple-1.1s-221px-ezgif.com-crop.gif'
+    clickmage.setAttribute("id", "clicked")
+    cursor.innerHTML = `
+        <i id="cur" style='color:#E2DFD2; text-shadow: 2px 2px black;font-size:40px;' class="fa-solid fa-arrow-pointer"></i>
+        `;
+    cursor.style.display = 'inline-block'
+    cursor.style.position = "absolute";
+    cursor.style.zIndex = "1000000";
+    // cursor.style.color='black'
+
+
+
+    let click;
+    iframe.addEventListener("load", () => {
+        iframe.contentDocument.body.appendChild(cursor);
+        iframe.contentDocument.body.appendChild(clickmage);
+        click = iframe.contentDocument.querySelector("#clicked");
+        click.style.position = 'absolute'
+        click.style.display = 'none'
+        click.style.zIndex = "1000000";
+    });
+
+    window.onload = async () => {
+        try {
+            let url = new URLSearchParams(window.location.search)
+            let id = url.get('id')
+            let allEvents = `http://localhost:5050/event/${id}`
+            let eventCount = `http://localhost:5050/event/count/${id}`
+            let ans = await fetch(allEvents, {
+                method: 'GET',
+                headers: {
+                    "Content-type": 'Application/json'
+                }
+            })
+            let res = await ans.json()
+            console.log("allevents", res);
+
+            let ans1 = await fetch(eventCount, {
+                method: 'GET',
+                headers: {
+                    "Content-type": 'Application/json'
+                }
+            })
+            let res1 = await ans1.text()
+
+            console.log("eventCount", res1);
+
+
+            // finding the lastone id timestamp
+            let lastId = (res1 - 1) + res[0].id
+            console.log("lastid", lastId);
+            let lastIdTimestamp = `http://localhost:5050/event/onlyOne?eventId=${lastId}&&visitorId=${id}`
+
+            let lastIdAns = await fetch(lastIdTimestamp, {
+                method: 'GET',
+                headers: {
+                    "Content-type": 'Application/json'
+                }
+            })
+            let lastIdres = await lastIdAns.text()
+
+            // pehlApyar = res[0].time
+            durationInSeconds = lastIdres - res[0].time
+            newDur = Math.ceil(durationInSeconds / 1000)
+            callTime(newDur)
+            display(res)
+
+            if (res1 > 2000) {
+                res1 = res1 - 2000
+                callSet(id, res1)
+            }
+
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+
+
+    let offset = 2000;
+    let limit = 0;
+    let arr = [];
+    // let dl = 1;
+    let j = 0;
+
+    async function callSet(id, length) {
+        for (let i = 1; i < 1000; i++) {
+            if (length > 2000) {
+                limit = 2000;
+            } else {
+                limit = length;
+                j = 1;
+            }
+            // console.log("offset", offset, "limit", limit, "length", length);
+
+            ((offset, limit) => {
+                setTimeout(async () => {
+                    // console.log(offset);
+                    let url = `http://localhost:5050/event/limit?id=${id}&&offset=${offset}&&limit=${limit}`;
+                    // console.log(url);
+                    try {
+                        let ans = await fetch(url, {
+                            method: 'GET',
+                            headers: {
+                                "Content-type": 'Application/json'
+                            }
+                        });
+                        let res = await ans.json();
+                        arr.push(res)
+                        // console.log(arr);
+                        // console.log("please checkkkkky", res);
+                    } catch (error) {
+                        console.log(error);
+                        console.log("some error");
+                    }
+
+                }, 10000 * i);
+            })(offset, limit);  // Pass the current values of offset and limit
+
+            offset = offset + limit;
+            length = length - limit;
+            // console.log("lwda labachi");
+
+            if (j == 1) {
+                break;
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // let length = length - offset
+
+    // while (length) {
+    //     if (length < 2000) {
+    //         limit = length
+    //     } else {
+    //         limit = 2000
+    //     }
+    //     settimeout(() => {
+    //         let url = '?id=id&&offset=${offset}&&limit=${limit}'
+    //         arr.push(ans)
+    //         offset = offset + limit
+    //         length = length - limit
+    //     }, 10000)
+    // }
+
+
+
+
+
+
+
+
+    // Function to scale an event to the iframe's dimensions
+
+    function scaleEvent(event) {
+        // console.log(event);
+        return {
+            type: event.eventType,
+            x: event.x * 0.88,
+            y: event.y,
+            timestamp: event.time,
+            scrollPosition: event.scrollPosition
+        };
+    }
+    function moveCursor(x, y) {
+        cursor.style.left = `${x}px`;
+        cursor.style.top = `${y}px`;
+    }
+    async function simulateClick(x, y) {
+        click.style.display = 'block';
+        click.style.left = `${x}px`;
+        click.style.top = `${y}px`;
+        // console.log(click);
+        setTimeout(() => { click.style.display = 'none'; }, 800);
+    }
+
+    function cally() {
+        // console.log("came here inside cally");
+        // console.log(arr);
+        let cc = arr[0]
+        arr.splice(0, 1)
+        // console.log("cc", cc);
+        display(cc)
+
+    }
+
+
+    let lwda = 0;
+    async function display(events) {
+        // console.log("i am called disply");
+        // console.log("insideeeeeeeee display", events);
+
+
+        setTimeout(() => {
+            // console.log("cally triggered");
+            cally()
+        }, (events[events.length - 1].time - events[0].time) +15);
+
+
+
+
+
+        let tmbacoo = 0;
+        for (let i = 0; i < events.length; i++) {
+            setTimeout(() => {
+                tmbacoo++;
+                lwda++
+                let event = scaleEvent(events[i]);
+                moveCursor(event.x, event.y);
+                if (event.type === 'click') {
+                    simulateClick(event.x, event.y);
+                } else if (event.type == 'scroll') {
+                    let iframe1 = document.getElementById('ifra');
+                    let iframeWindow = iframe1.contentWindow;
+                    iframeWindow.scrollTo(0, event.scrollPosition);
+                } else if (event.type == 'load') {
+                    console.log("load");
+                    if (events[i].url == 'http://localhost:5050/public/about.html') {
+                        // console.log("inside about");
+                        iframe.src = './copy/about.html'
+                        iframe.addEventListener("load", () => {
+                            iframe.contentDocument.body.appendChild(cursor);
+                            iframe.contentDocument.body.appendChild(clickmage);
+                            click = iframe.contentDocument.querySelector("#clicked");
+                            click.style.position = 'absolute'
+                            click.style.display = 'none'
+                            click.style.zIndex = "1000000";
+                        });
+                    } else if (events[i].url == 'http://localhost:5050/public/blog.html') {
+                        iframe.src = './copy/blog.html'
+                        iframe.addEventListener("load", () => {
+                            iframe.contentDocument.body.appendChild(cursor);
+                            iframe.contentDocument.body.appendChild(clickmage);
+                            click = iframe.contentDocument.querySelector("#clicked");
+                            click.style.position = 'absolute'
+                            click.style.display = 'none'
+                            click.style.zIndex = "1000000";
+                        });
+                    } else if ((events[i].url == 'http://localhost:5050/public/index.html') || (events[i].url == 'http://localhost:5050/')) {
+                        iframe.src = './copy/index.html'
+                        iframe.addEventListener("load", () => {
+                            iframe.contentDocument.body.appendChild(cursor);
+                            iframe.contentDocument.body.appendChild(clickmage);
+                            click = iframe.contentDocument.querySelector("#clicked");
+                            click.style.position = 'absolute'
+                            click.style.display = 'none'
+                            click.style.zIndex = "1000000";
+                        });
+                    }
+                }
+
+                // console.log(i);
+
+
+
+            }, events[i].time - events[0].time);
+            // console.log("outside",i);
+        }
+
+    }
+
+    // console.log("lwda",lwda);
+
+
+
+
+
+
+
+
+    function callTime(durationInSeconds) {
+
+        const progressBar = document.getElementById("insidepp");
+        progressBar.style.background = "linear-gradient(to right, black 0%, transparent 0%)";
+        if (durationInSeconds <= 59) {
+            if (durationInSeconds < 10) {
+                document.querySelector("#timer>p").innerText = `0:0${durationInSeconds}`
+            } else {
+                document.querySelector("#timer>p").innerText = `0:${durationInSeconds}`
+            }
+        } else {
+            lastSec = durationInSeconds % 60
+            firstMin = (durationInSeconds - lastSec) / 60
+            if (lastSec >= 10) {
+                document.querySelector("#timer>p").innerText = `${firstMin}:${lastSec}`
+            } else {
+
+                document.querySelector("#timer>p").innerText = `${firstMin}:0${lastSec}`
+            }
+        }
+
+        let allMili = durationInSeconds * 10
+        // console.log("allmili", allMili);
+        const totalSteps = 100;
+        let currentStep = 0;
+        const intervalId = setInterval(() => {
+            currentStep++;
+            const percentage = (currentStep / totalSteps) * 100;
+            progressBar.style.background = `linear-gradient(to right, black ${percentage}%, transparent ${percentage}%)`;
+            if (currentStep === totalSteps) {
+                clearInterval(intervalId);
+            }
+        }, allMili);
+
+    }
+
+
+
+</script>

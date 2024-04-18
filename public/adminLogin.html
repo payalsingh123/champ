@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Belanosima:wght@400;600;700&family=Cherry+Bomb+One&family=Gasoek+One&family=Moirai+One&display=swap"
+        rel="stylesheet">
+    <style>
+        body{
+            font-family:  'Ubuntu', sans-serif;;
+            background-color: black;
+            display: grid;
+            place-items: center;
+        }
+        #adminLogin{
+            background-color: white;
+            display: inline-block;
+            height: 300px;
+            margin-top: 100px;
+            width: 480px;
+            border-radius: 1.5rem;
+        }
+        h3{
+            display: inline-block;
+            font-size: larger;
+            font-family:  'Ubuntu', sans-serif;
+            margin-left: 20px;
+        }
+        button{
+            display: block;
+            margin: auto;
+            margin-top: 10px;
+            font-size: larger;
+            padding: 5px 10px 5px 10px ;
+            border-radius: 1.5rem;
+            cursor: pointer;
+
+        }
+        button:hover{
+            background-color: grey;
+            color: white;
+        }
+        input{
+            border-radius: 1.5rem;
+            padding: 10px ;
+        }
+        input::placeholder{
+            font-size: larger;
+        }
+        h1{
+            text-align: center;
+            font-size: 30px;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+ 
+    <form id="adminLogin">
+        <h1>Admin Login</h1>
+        <h3>Enter Admin Name : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h3>
+        <input type="text" placeholder="enter your username" id="username">
+        <h3>Enter Admin Password : &nbsp;&nbsp;</h3>
+        <input type="password" placeholder="enter your password" id="password">
+        <button>Submit</button>
+    </form>
+</body>
+
+</html>
+
+<script>
+
+ 
+
+setTimeout(() => {
+    alert("username : payalsingh, password : payal@21")   
+}, 2000);
+
+
+    // document.querySelector("#adminLogin").addEventListener("submit", async (event) => {
+    //     event.preventDefault();
+    //     const userName = document.querySelector("#username").value;
+    //     const password = document.querySelector("#password").value;
+    //     const obj = {
+    //         userName,
+    //         password,
+    //     };
+    //     const adminUrl = "http://localhost:5050/admin/login";
+    //     try {
+    //         const response = await fetch(adminUrl, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-type': 'application/json',
+    //             },
+    //             body: JSON.stringify(obj),
+    //         });
+    //         console.log(response);
+    //         if (response.ok) {
+    //             const data = await response.json(); // Parse the response body
+    //             console.log("data:", data);
+    //             const token = data.token; // Extract the token
+    //             console.log(token); // Log the token (you can store it or use it as needed)
+    //         } else {
+    //             console.error('Error:', response.status, response.statusText);
+    //         }
+    //     } catch (error) {
+    //         console.error('Fetch error:', error);
+    //     }
+    // });
+
+    document.querySelector("#adminLogin").addEventListener("submit", async () => {
+       
+        event.preventDefault()
+        let userName = document.querySelector("#username").value;
+        let password = document.querySelector("#password").value;
+        let obj = {
+            userName, password
+        }
+        let adminUrl = "http://localhost:5050/admin/login"
+        try {
+            const res = await fetch(adminUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(obj)
+            })
+            if (res.ok) {
+                let data = await res.json()
+                // console.log(data);
+                let adminObj={"id":data.id,"admin":data.admin,"token":data.token}
+                // console.log(adminObj);
+                sessionStorage.setItem("adminObj",JSON.stringify(adminObj))
+                window.location.href='./adminInterface.html'
+                // window.location.href=`http://localhost:5050/admin/${data.id}`
+
+            }else{
+                console.log("response is error");
+                alert("incorrect userid and password")
+            }
+
+        } catch (error) {
+            console.log(error);
+            alert("incorrect userid and password")
+        }
+    })
+
+
+
+
+
+
+
+
+
+
+</script>

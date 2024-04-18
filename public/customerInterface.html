@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100&family=Ubuntu&display=swap" rel="stylesheet">
+
+</head>
+
+<style>
+    * {
+        margin: 0;
+        font-family: 'Ubuntu', sans-serif;
+
+    }
+
+    #navBar {
+        height: 50px;
+        width: 100%;
+        background: linear-gradient(to right, #A7032C, #9F0336, #8F034E, #85035B);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        /* padding-left: 20px;  */
+        /* padding-right: 20px; */
+    }
+
+    #name {
+        margin-top: 10px;
+        margin-left: 20px;
+    }
+
+    #email {
+        margin-top: 10px;
+        margin-right: 20px;
+    }
+
+    #not {
+        text-align: center;
+    }
+
+    #sh {
+        /* position: absolute; */
+        margin-top: 100px;
+        margin-bottom: 100px;
+        margin-left: 550px;
+        padding: 10px 15px 10px 14px;
+        font-size: 25px;
+        background-color: #85035B;
+        cursor: pointer;
+        color: white;
+    }
+
+    #sh:hover {
+        color: white;
+    }
+
+    #main {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: auto;
+        gap: 20px;
+    }
+
+    #main>div {
+        font-size: 20px;
+        padding: 10px;
+        /* border: 1px solid red; */
+        box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+    }
+
+    #main>div>p,
+    #main>div>button {
+        margin-top: 10px;
+    }
+
+    #main>div>button {
+        padding: 5px;
+        margin-left: 10px;
+        font-size: 20px;
+        background-color: #8F034E;
+        color: white;
+        cursor: pointer;
+    }
+
+    #main>div>button:hover {
+        background-color: black;
+        color: white;
+    }
+
+    #main>div>img {
+        height: 100px;
+        width: 100px;
+    }
+</style>
+
+<body>
+
+    <div id="navBar">
+        <p id="name"></p>
+        <p id="email"></p>
+    </div>
+
+
+    <div id="main"></div>
+    <h1 id="not">The cart is Empty</h1>
+    <button id="sh" onclick="window.location.href='http://localhost:5050/public/shop.html'">Shop All Products</button>
+</body>
+
+</html>
+<script>
+
+    let userData = JSON.parse(sessionStorage.getItem("customerObj"))
+    document.querySelector("#name").innerText = `Welcome ${userData.name} `
+    document.querySelector("#email").innerText = userData.email
+
+    let cId = new URLSearchParams(window.location.search)
+    let id = cId.get('id')
+    let fetUrl = `http://localhost:5050/addtocart/just?id=${id}`
+
+    async function getData() {
+        let ans = await fetch(fetUrl, {
+            method: 'GET',
+            headers: {
+                'Content-type': 'Application/json'
+            }
+        })
+        console.log(ans);
+        let res = await ans.json()
+        console.log(res);
+        if(res.length){
+            document.querySelector("#not").style.display='none'
+            console.log("upper");
+            displayRE(res)
+        }else{
+            console.log("hey this");
+            document.querySelector("#not").style.display='block'
+        }
+         
+    }
+    getData()
+
+    async function displayRE(res) {
+        document.querySelector("#main").innerHTML = ''
+        res.forEach(el => {
+            document.querySelector("#main").innerHTML += `
+                <div>
+                
+                    <img src="${el.product.image}" alt="">
+                    <p>${el.product.name}</p>
+                    <p>${el.product.price}$</p>
+                    <button class='adda' id="${el.id}" >Remove Cart</button>
+                    <button id="adc2">Buy Product</button>
+                </div>
+            
+            `
+        });
+        document.querySelectorAll(".adda").forEach(el => {
+            el.addEventListener("click", shape)
+        });
+
+    }
+
+    async function shape() {
+        let id = this.id
+        let deleteUrl = `http://localhost:5050/addtocart/${id}`
+        let dres = await fetch(deleteUrl, {
+            method: 'DELETE',
+            headers: {
+                'Content-type': 'application/json'
+            }
+        })
+        if (dres.ok) {
+            console.log("deleted");
+        } else {
+            console.log("not deleted");
+        }
+    }
+    // if(document.querySelector("#main").innerHTML==''){
+    //     console.log("hey");
+    //     document.querySelector("#not").style.display='block'
+    // }else{
+    //     console.log("no baby");
+    //     document.querySelector("#not").style.display='none'
+    // }
+
+</script>

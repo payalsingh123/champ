@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100&family=Ubuntu&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        * {
+            font-family: 'Ubuntu', sans-serif;
+        }
+
+        #main {
+            display: flex;
+        }
+
+        #img>img {
+            height: 700px;
+            width: 700px;
+        }
+
+        #main>div>h1 {
+            font-size: 70px;
+        }
+
+        #price {
+            font-size: 40px;
+            font-weight: bolder;
+        }
+
+        #star {
+            color: green;
+        }
+
+        #rate {
+            font-size: 20px;
+        }
+
+        #desc {
+            font-size: 20px;
+            line-height: 1.5;
+            word-spacing: 2px;
+        }
+
+        #bn,
+        #atc {
+            display: block;
+            width: 80%;
+            padding: 10px;
+            margin: 10px;
+            font-size: 20px;
+            border-radius: 1.5rem;
+            margin-left: 70px;
+            cursor: pointer;
+        }
+
+        #atc:hover {
+            color: green;
+            border: 1px solid green;
+        }
+
+        #bn {
+            background-color: green;
+        }
+
+        #bn:hover {
+            background-color: black;
+            color: white;
+        }
+
+        #notify {
+            box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+            border: 1px solid black;
+            display: none;
+            /* display: inline-block; */
+            background-color: red;
+            width: 160px;
+            position: absolute;
+            height: 30px;
+            /* display: grid; */
+            place-items: center;
+            top: 50%;
+            left: 50%;
+            font-size: 20px;
+            font-weight: bolder;
+            padding: 5px 10px 5px 10px;
+            border-radius: 1.5rem;
+            color: white;
+            /* right: 0; */
+        }
+
+        #drop {
+            display: none;
+            animation: slideDown 2s ease-out;
+            background-color: white;
+            color: black;
+            position: absolute;
+            right: 20px;
+            top: 0;
+            border: 1px solid rgb(5, 4, 4);
+            padding: 10px;
+            font-size: 25px;
+        }
+
+        #drop>.ck {
+            padding: 10px;
+            font-size: 20px;
+            font-weight: bolder;
+            background-color: grey;
+            color: white;
+            cursor: pointer;
+            margin-left: 60px;
+        }
+
+        #drop>.ck:hover {
+            background-color: black;
+        }
+
+
+        @keyframes slideDown {
+            0% {
+                top: -100%;
+                /* Start from above the screen */
+            }
+
+            100% {
+                top: 0;
+                /* End at the middle of the screen */
+            }
+        }
+
+        .cross {
+            background-color: red;
+            color: white;
+            padding: 5px;
+            font-size: 15px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div id="main">
+        <div id="img">
+            <img src="" alt="">
+        </div>
+        <div>
+            <h1 id="prod"></h1>
+            <p id="price"></p>
+            <p id="rate"></p>
+            <p id="desc"></p>
+            <button id="bn">Buy Now</button>
+            <button id="atc">Add to Cart</button>
+        </div>
+
+        <div id="notify"> Please login first </div>
+
+        <div id="drop">
+            <button class="cross" onclick="this.parentElement.style.display='none'"><i
+                    class="fa-solid fa-xmark"></i></button>
+            <p><i class="fa-solid fa-check" style="color: green;"></i> Item is Added to Cart</p>
+            <button class="ck" onclick="window.location.href='http://localhost:5050/public/payPage.html'">Checkout <i
+                    class="fa-solid fa-chevron-right"></i></button>
+        </div>
+
+    </div>
+</body>
+
+</html>
+
+<script>
+
+    let reqId = new URLSearchParams(window.location.search)
+    let id = reqId.get('id')
+    console.log(id);
+    let url = `http://localhost:5050/product/${id}`
+    async function get() {
+        let ans = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json'
+            }
+        })
+        let res = await ans.json()
+        displayPro(res)
+    }
+    get()
+
+
+
+
+
+
+
+// -----------------------------this all about tracker-----------------------------------
+
+
+
+    let events = [];
+    let visitorId;
+    let eventy = []
+
+    window.addEventListener("load", async () => {
+        try {
+            let ans = await fetch("http://localhost:5050/current", {
+                method: 'GET',
+                headers: {
+                    'content-type': 'application/json'
+                }
+            });
+            let res = await ans.text();
+            visitorId = res;
+        } catch (error) {
+            console.log(error);
+        }
+        // console.log("window loaded of champion")
+        eventy.push({
+            eventType: 'load',
+            url: window.location.href,
+            time: new Date().getTime(),
+            visitorId: visitorId
+        });
+        // console.log(eventy)
+    });
+
+    document.addEventListener('click', async function (e) {
+        eventy.push({
+            eventType: 'click',
+            x: e.pageX,
+            y: e.pageY,
+            time: new Date().getTime(),
+            visitorId: visitorId
+        });
+        events = eventy
+        eventy = []
+        storePost(events)
+    });
+
+    async function storePost(events) {
+        let eventUrl = "http://localhost:5050/event"
+        await fetch(eventUrl, {
+            method: 'POST',
+            headers: {
+                'Content-type': 'Application/json'
+            },
+            body: JSON.stringify(events)
+        })
+        events = []
+    }
+
+    document.addEventListener('mousemove', async function (e) {
+
+        eventy.push({
+            eventType: 'mousemove',
+            x: e.pageX,
+            y: e.pageY,
+            time: new Date().getTime(),
+            visitorId: visitorId
+        });
+
+        // console.log("first event", eventy)
+        if (eventy.length > 1000) {
+            events = eventy;
+            eventy = [];
+            storePost(events)
+        }
+        // console.log("last events", eventy)
+    });
+
+    window.addEventListener('scroll', (event) => {
+        eventy.push({
+            eventType: 'scroll',
+            scrollPosition: window.scrollY,
+            time: new Date().getTime(),
+            visitorId: visitorId
+        })
+        // console.log(events)
+    })
+
+
+
+
+
+
+
+
+
+    window.addEventListener('beforeunload', async (event) => {
+        events = eventy;
+        eventy = [];
+        storePost(events)
+    })
+
+
+    // ---------------------------till here was the tracker-------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    async function displayPro(res) {
+        document.querySelector("#img>img").src = res.image
+        document.querySelector("#prod").innerText = res.name
+        document.querySelector("#price").innerText = `${res.price} USD`
+        document.querySelector("#rate").innerHTML = `${res.rating}  <i class="fa-solid fa-star" id="star"></i>`
+        document.querySelector("#desc").innerText = res.desc
+
+
+
+    }
+
+
+    document.querySelector("#bn").addEventListener("click", () => {
+        let cust = JSON.parse(sessionStorage.getItem("customerObj"))
+        if (cust) {
+            window.location.href = 'http://localhost:5050/public/payPage.html'
+        } else {
+            document.querySelector("#notify").style.display = 'grid'
+            setTimeout(() => {
+                document.querySelector("#notify").style.display = 'none'
+            }, 2000);
+
+        }
+
+    })
+
+
+    document.querySelector("#atc").addEventListener("click", async () => {
+        let cust = JSON.parse(sessionStorage.getItem("customerObj"))
+        let customerId = cust.id
+        let pro = new URLSearchParams(window.location.search)
+        let productId = pro.get('id')
+        let obj = { customerId, productId }
+        if (cust) {
+            // window.location.href = 'http://localhost:5050/public/payPage.html'
+            let url = 'http://localhost:5050/addToCart'
+            let ans = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(obj)
+            })
+            document.querySelector("#drop").style.display = 'block'
+        } else {
+            document.querySelector("#notify").style.display = 'grid'
+            setTimeout(() => {
+                document.querySelector("#notify").style.display = 'none'
+            }, 2000);
+
+        }
+
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>

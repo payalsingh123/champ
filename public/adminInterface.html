@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Interface</title>
+    <link rel="stylesheet" href="../styles/adminInterface.css">
+
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100&family=Ubuntu&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="mainCon">
+        <div id="adminOption">
+            <div id="profile">
+                <img id="profileImg" src="" alt="">
+            </div>
+            <p id="welcome"></p>
+            <div id="otherOption">
+                <div id="subOther1">Add Category</div>
+                <div id="subOther2">Add Product</div>
+                <div id="subOther3">All Products</div>
+                <div id="subOther4">My Products</div>
+                <div id="subOther5">Visitors</div>
+            </div>
+        </div>
+        <div id="adminAnswer">
+            <div id="addCategory">
+                <input type="text" placeholder="Category Name" id="category">
+                <button id="submitCat">Submit</button>
+            </div>
+            <div id="addProduct">
+                <form method="post" enctype="multipart/form-data">
+                    <div>
+                        <h3>Product Name :</h3> 
+                        <input type="text" name="name" placeholder="write product name">
+                    </div>
+                    <div>
+                        <h3>Price :</h3> 
+                        <input type="number" name="price" placeholder="write price">
+                    </div>
+                    <div>
+                        <h3>Description :</h3> 
+                        <input type="text" name="desc" id="desc" placeholder="write description">
+                    </div>
+                    <div>
+                        <h3>Choose Image :</h3>&nbsp;&nbsp;
+                        <input type="file" id="imag" name="image">
+                    </div>
+                    <div>
+                        <h3>Choose Category :</h3>&nbsp;&nbsp;
+                        <select id="categoryId" name="categoryId">
+                            <option value="1">Headphones</option>
+                            <option value="2">Earbuds</option>
+                            <option value="3">Speakers</option>
+                        </select>
+                    </div>
+                    <button>Submit</button>
+                </form>
+            </div>
+            <div id="allProduct">
+  
+            </div>
+            <div id="myProduct">
+                
+            </div>
+            <div id="visitor">
+                <!-- <h1>hey this side visitor</h1> -->
+                 
+            </div>
+            <div id="notify"></div>
+        </div>
+    </div>
+</body>
+
+</html>
+<script src="../scripts/adminInterface.js"></script>

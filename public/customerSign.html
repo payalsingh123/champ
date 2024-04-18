@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100&family=Ubuntu&display=swap" rel="stylesheet">
+</head>
+<style>
+  body {
+    background-color: skyblue;
+  }
+
+  * {
+    font-family: 'Ubuntu', sans-serif;
+  }
+
+  #main {
+    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+    /* box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px; */
+    border: 2px solid rgba(253, 253, 253, 0.947);
+    background-color: rgba(253, 251, 251, 0.21);
+    backdrop-filter: blur(5px);
+    width: 550px;
+    margin: auto;
+    margin-top: 100px;
+    padding: 20px;
+    padding-left: 50px;
+    padding-top: 50px;
+  }
+
+  /* #main>input{
+        display: block;
+    } */
+  #main input {
+    border: 2px solid black;
+    margin-bottom: 10px;
+    padding: 8px;
+    font-size: 25px;
+  }
+
+  #main label {
+    font-size: 25px;
+
+  }
+
+  #submit {
+    display: block;
+    margin-left: 190px;
+    padding: 5px 15px 5px 15px;
+    border-radius: 1.5rem;
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  #submit:hover {
+    background-color: black;
+    color: white;
+  }
+</style>
+
+<body>
+
+  <div id="main">
+    <label for="">Name : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <input type="text" id="name" placeholder="Enter your name">
+    </label>
+    <label for="">
+      Email : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <input type="text" id="email" placeholder="Enter your email">
+
+    </label>
+    <label for="">
+      Password :&nbsp;
+      <input type="password" name="" id="pass" placeholder="Enter your password">
+    </label>
+
+    <button id="submit">Submit</button>
+  </div>
+
+</body>
+
+</html>
+
+<script>
+  document.querySelector("#submit").addEventListener("click", async () => {
+    let name = document.querySelector("#name").value
+    let email = document.querySelector("#email").value
+    let password = document.querySelector("#pass").value
+    let obj = { name, email, password }
+    let url = "http://localhost:5050/customer"
+    let res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        "Content-type": "Application/json"
+      },
+      body: JSON.stringify(obj)
+    })
+
+    console.log(res);
+    if (res.ok) {
+      // window.location.href = 'http://localhost:5050/public/customerInterface.html'
+
+      let lurl = "http://localhost:5050/customer/login"
+      var lres = await fetch(lurl, {
+        method: 'POST',
+        headers: {
+          "Content-type": "Application/json"
+        },
+        body: JSON.stringify(obj)
+      })
+
+     var lres=await lres.json();
+     console.log(lres);
+      if(lres){
+        sessionStorage.setItem("customerObj" ,JSON.stringify(lres))
+        window.location.href = `http://localhost:5050/public/customerInterface.html?id=${lres.id}`
+      }
+
+
+    } else {
+      console.log("error while creating customer");
+    }
+
+  })
+
+
+
+
+
+</script>
