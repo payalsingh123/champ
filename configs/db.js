@@ -1,7 +1,7 @@
 const {Sequelize}= require("sequelize")
 require("dotenv").config()
  
-const seqlize=new Sequelize("champion","root",`${process.env.dbPassword}`,{
+const seqlize=new Sequelize("champion","root",`Hi@payal12`,{
     host:"localhost",
     dialect:"mysql"
 })
